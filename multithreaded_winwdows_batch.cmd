@@ -1,7 +1,6 @@
 @echo off
 :: !IMPORTANT! Set the following variable to your desired size of the "thread pool" :-)
-set g_maximum_threads=3
-
+set g_thread_pool_size=8
 goto :the_coordinator
 
 :: ===============================================================================================
@@ -46,18 +45,18 @@ exit /b 0
 
 set g_this_script=%0
 if "x%DEBUG%"=="xyes" echo.This script = %g_this_script%>&2
-if "x%DEBUG%"=="xyes" echo.Maximum number of active threads = %g_maximum_threads%>&2
 
 set l_modus_operandi=child
-if "x%nop77svk_async_multibatch_run%"=="x" set l_modus_operandi=master
-if "x%nop77svk_async_multibatch_child%"=="x" set l_modus_operandi=master
+if "x%nop77svk_async_multibatch__run%"=="x" set l_modus_operandi=master
+if "x%nop77svk_async_multibatch__child%"=="x" set l_modus_operandi=master
 if "x%DEBUG%"=="xyes" echo.Current modus operandi = %l_modus_operandi%>&2
 
 if %l_modus_operandi%==child (
-	if "x%DEBUG%"=="xyes" echo.I'm a run %nop77svk_async_multibatch_run%'s child #%nop77svk_async_multibatch_child%>&2
+	if "x%DEBUG%"=="xyes" echo.I'm a run %nop77svk_async_multibatch__run%'s child #%nop77svk_async_multibatch__child%>&2
 	call :thread_stuff %*
-	del %TEMP%\nop77svk_async_multibatch.%nop77svk_async_multibatch_run%.%nop77svk_async_multibatch_child%.lck
+	del %TEMP%\nop77svk_async_multibatch.%nop77svk_async_multibatch__run%.%nop77svk_async_multibatch__child%.lck
 ) else (
+	if "x%DEBUG%"=="xyes" echo.Thread pool size = %g_thread_pool_size%>&2
 	set l_run_id=%RANDOM%
 	if exist %TEMP%\nop77svk_async_multibatch.%l_run_id%.*.lck (
 		echo ERROR: There appear to be some active threads with the run id of %l_run_id%!
@@ -69,26 +68,25 @@ if %l_modus_operandi%==child (
 	call :coordinator_stuff %*
 	call :wait_for_active_threads_to_be_max 0
 )
+endlocal
 
 exit /b 0
 
 :: -----------------------------------------------------------------------------------------------
 :async_thread
 
-set /a l_maximum_threads_minus_one=%g_maximum_threads%-1
+set /a l_maximum_threads_minus_one=g_thread_pool_size-1
 call :wait_for_active_threads_to_be_max %l_maximum_threads_minus_one%
 
 set /a l_child_id=l_child_id+1
 echo.>%TEMP%\nop77svk_async_multibatch.%l_run_id%.%l_child_id%.lck
 
-set nop77svk_async_multibatch_run=%l_run_id%
-set nop77svk_async_multibatch_child=%l_child_id%
+set nop77svk_async_multibatch__run=%l_run_id%
+set nop77svk_async_multibatch__child=%l_child_id%
 if "x%DEBUG%"=="xyes" echo.Spawning a run id %l_run_id%'s child #%l_child_id%>&2
-::echo.cmd /c %g_this_script% %*
-::cmd /c %g_this_script% %*
 start cmd /c %g_this_script% %*
-set nop77svk_async_multibatch_run=
-set nop77svk_async_multibatch_child=
+set nop77svk_async_multibatch__run=
+set nop77svk_async_multibatch__child=
 
 exit /b 0
 
@@ -102,7 +100,7 @@ setlocal EnableExtensions
 :loop
 for /f %%a in ('dir /one /b %TEMP%\nop77svk_async_multibatch.%l_run_id%.*.lck 2^>nul ^| %SystemRoot%\System32\find.exe /c ".lck"') do set l_active_threads=%%a
 if "x%l_active_threads%"=="x" set l_active_threads=0
-if "x%DEBUG%"=="xyes" echo.Active threads = %l_active_threads%, waiting for maximum of %l_max_no_of_active_threads% acive threads >&2
+if "x%DEBUG%"=="xyes" echo.Active threads = %l_active_threads%, waiting for maximum of %l_max_no_of_active_threads% active threads >&2
 if %l_active_threads% gtr %l_max_no_of_active_threads% (
 	if "x%DEBUG%"=="xyes" (
 		%SystemRoot%\system32\timeout.exe /t 1 /nobreak >&2
