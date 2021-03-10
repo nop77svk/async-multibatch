@@ -1,6 +1,6 @@
 @echo off
 :: !IMPORTANT! Set the following variable to your desired size of the "thread pool" :-)
-set g_thread_pool_size=8
+set /a g_thread_pool_size=2*%NUMBER_OF_PROCESSORS%
 goto :the_coordinator
 
 :: ===============================================================================================
