@@ -8,7 +8,7 @@ goto :the_coordinator
 :: ===============================================================================================
 :coordinator_stuff
 :: Use "call :async_thread <arguments>" to spawn a thread
-:: !IMPORTANT! Start editing here for your "coordinator" stuff
+:: !IMPORTANT! Start editing your "coordinator" stuff here
 
 call :async_thread 1 Q %*
 call :async_thread 2 W %*
@@ -21,12 +21,12 @@ call :async_thread 3 I %*
 call :async_thread 4 O %*
 call :async_thread 5 P %*
 
-:: !IMPORTANT! End editing here for your "coordinator" stuff
+:: !IMPORTANT! End editing your "coordinator" stuff here
 exit /b 0
 
 :: -----------------------------------------------------------------------------------------------
 :thread_stuff
-:: !IMPORTANT! Start editing here for your "thread" stuff
+:: !IMPORTANT! Start editing your "thread" stuff here
 
 echo.This thread started just now
 echo.Parameters passed = %*
@@ -38,7 +38,7 @@ echo.Target thread run time = %l_timeout_in_seconds% seconds
 
 echo.This thread has done its work
 
-:: !IMPORTANT! End editing here for your "thread" stuff
+:: !IMPORTANT! End editing your "thread" stuff here
 exit /b 0
 
 :: ===============================================================================================
