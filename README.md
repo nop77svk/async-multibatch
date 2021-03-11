@@ -1,3 +1,3 @@
-# Multithreaded Windows batch script
+# Multithreaded Windows batch scripting
 
 2do!
