@@ -76,7 +76,7 @@ if "x%sk.nop77svk.async_multibatch.cfg.start_minimized%"=="xTRUE" set l_thread_w
 if "x%sk.nop77svk.async_multibatch.cfg.start_minimized%"=="xY" set l_thread_window_start_size=/min
 if "x%sk.nop77svk.async_multibatch.cfg.start_minimized%"=="x1" set l_thread_window_start_size=/min
 
-start %l_thread_window_start_size% cmd /c %g_this_script% %*
+start %l_thread_window_start_size% cmd /c "%g_this_script% %*"
 set sk.nop77svk.async_multibatch.arg.run=
 set sk.nop77svk.async_multibatch.arg.child=
 
