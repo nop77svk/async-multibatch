@@ -1,6 +1,7 @@
 @echo off
 :: !IMPORTANT! Set the following variable to your desired size of the "thread pool" :-)
 set /a sk.nop77svk.async_multibatch.cfg.thread_pool_size=2*%NUMBER_OF_PROCESSORS%
+
 set sk.nop77svk.async_multibatch.cfg.start_minimized=no
 
 goto :the_coordinator
@@ -70,7 +71,7 @@ if %l_modus_operandi%==child (
 	set l_child_id=0
 	if "x%DEBUG%"=="xyes" echo.I'm a run %l_run_id%'s master>&2
 	call :coordinator_stuff %*
-	call :wait_for_active_threads_to_be_max 0
+	call :serialization_point
 )
 endlocal
 
@@ -99,6 +100,12 @@ start %l_thread_window_start_size% cmd /c "%g_this_script% %*"
 set sk.nop77svk.async_multibatch.arg.run=
 set sk.nop77svk.async_multibatch.arg.child=
 
+exit /b 0
+
+:: -----------------------------------------------------------------------------------------------
+:serialization_point
+
+call :wait_for_active_threads_to_be_max 0
 exit /b 0
 
 :: -----------------------------------------------------------------------------------------------
