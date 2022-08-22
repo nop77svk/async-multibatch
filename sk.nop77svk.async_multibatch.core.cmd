@@ -9,6 +9,7 @@ goto :the_coordinator
 :: ===============================================================================================
 :coordinator_stuff
 :: Use "call :async_thread <arguments>" to spawn a thread
+:: Use "call :serialization_point" to explicitly wait for threads
 :: !IMPORTANT! Start editing your "coordinator" stuff here
 
 
